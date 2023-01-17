@@ -5,6 +5,8 @@ using UnityEngine;
 public class PlayerActions : MonoBehaviour
 {
     public float speed;
+    public GameManager manager;
+
     float h;
     float v;
     bool isHorizonMove;
@@ -23,14 +25,14 @@ public class PlayerActions : MonoBehaviour
     void Update()
     {
         //Move Value
-        h = Input.GetAxisRaw("Horizontal");
-        v = Input.GetAxisRaw("Vertical");
+        h = manager.isAction ? 0 : Input.GetAxisRaw("Horizontal");
+        v = manager.isAction ? 0 : Input.GetAxisRaw("Vertical");
 
         //Check Button Down & Up
-        bool hDown = Input.GetButtonDown("Horizontal");
-        bool vDown = Input.GetButtonDown("Vertical");
-        bool hUp = Input.GetButtonUp("Horizontal");
-        bool vUp = Input.GetButtonUp("Vertical");
+        bool hDown = manager.isAction ? false : Input.GetButtonDown("Horizontal");
+        bool vDown = manager.isAction ? false : Input.GetButtonDown("Vertical");
+        bool hUp = manager.isAction ? false : Input.GetButtonUp("Horizontal");
+        bool vUp = manager.isAction ? false : Input.GetButtonUp("Vertical");
 
         //Check Horizontal Move
         if (hDown)
@@ -64,9 +66,9 @@ public class PlayerActions : MonoBehaviour
         else if (hDown && h == 1)
             dirVec = Vector3.right;
 
-        //Scan Object ½ºÆäÀÌ½º¹Ù´©¸¦¶§ ¿ÀºêÁ§Æ®°¡ ÀÖ´Ù¸é Ãâ·Â
+        //Scan Object
         if (Input.GetButtonDown("Jump") && scanObject != null)
-            Debug.Log("This is :" + scanObject.name);
+            manager.Action(scanObject);
     }
 
     void FixedUpdate(){
@@ -77,7 +79,7 @@ public class PlayerActions : MonoBehaviour
         //Ray
         Debug.DrawRay(rigid.position, dirVec * 0.7f, new Color(0, 1, 0));
         RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, dirVec,0.7f, LayerMask.GetMask("Object"));
-        //Ray·Î Å½ÁöÇßÀ»¶§ Ãæµ¹ÀÌ ÀÖ´Ù¸é ·¹ÀÌ¿¡ °É¸° ¿ÀºêÁ§Æ®¸¦ ³Ö´Â´Ù ¾Æ´Ï¸é ³Î
+        //Rayï¿½ï¿½ Å½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½æµ¹ï¿½ï¿½ ï¿½Ö´Ù¸ï¿½ ï¿½ï¿½ï¿½Ì¿ï¿½ ï¿½É¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½Ö´Â´ï¿½ ï¿½Æ´Ï¸ï¿½ ï¿½ï¿½
         if (rayHit.collider != null)
         {
             scanObject = rayHit.collider.gameObject;
