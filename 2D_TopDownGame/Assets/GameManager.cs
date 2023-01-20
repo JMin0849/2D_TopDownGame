@@ -6,12 +6,17 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     public Image portraitImg;
+    public QuestManager questManager;
     public TalkManager talkManager;
     public GameObject talkPanel;
     public Text talkText;
     public GameObject scanObject;
     public bool isAction;
     public int talkIndex;
+
+    void Start(){
+        Debug.Log(questManager.CheckQuest());
+    }
 public void Action(GameObject scanObj){
     scanObject = scanObj;
     ObjData objData = scanObject.GetComponent<ObjData>();
@@ -20,14 +25,19 @@ public void Action(GameObject scanObj){
     talkPanel.SetActive(isAction);
 }
 void Talk(int id, bool isNpc){
-    string talkData = talkManager.GetTalk(id, talkIndex);
+    //Set Talk Data
+    int questTalkIndex = questManager.GetQuestTalkIndex(id);
+    string talkData = talkManager.GetTalk(id + questTalkIndex, talkIndex);
 
+    //End Talk
     if(talkData == null){
         isAction =false;
         talkIndex = 0;
+        Debug.Log(questManager.CheckQuest(id));
         return;
     }
 
+    //Continue Talk
     if(isNpc){
         talkText.text = talkData.Split(':')[0];
 
